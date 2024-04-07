@@ -20,14 +20,11 @@ def classify_input(user_input: str) -> str:
             prompt = [
                  {"role": "system", "content": f"classify user input {user_input} as label 'question' or 'greeting'"}
             ]
-            response = ""
-            for chunk in client.chat.completions.create(
-                    model="gpt-3.5-turbo", messages=prompt, stream=True, temperature=0.5, max_tokens=10
-            ):
-                text = chunk.choices[0].delta.content
-                if text is not None:
-                    response += text
-            return response.strip()
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo", messages=prompt, temperature=0.5, max_tokens=10
+            )
+            text = response.choices[0].message['content'] if response.choices else ""
+            return text.strip()
     except Exception as e:
         print(f"An error occurred: {e}")
         return "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
