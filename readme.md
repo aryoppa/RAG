@@ -6,7 +6,7 @@
 
 
 Run app.py to activate the LLM API:
-uvicorn app:app --reload (Local)
+ (Local)
 uvicorn app:app  --reload --host 0.0.0.0 --port 8000 (Server)
 Run test.py to test the api:
 python test.py
