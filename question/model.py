@@ -1,4 +1,5 @@
 import os
+import threading
 from question.utils import load_data, search_notebook
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -12,6 +13,14 @@ client = OpenAI(
 
 TOP_N = 3
 MODEL = "gpt-3.5-turbo"
+
+# Define a function to clear the memory after 5 minutes
+def clear_memory():
+    global memory
+    memory = []
+    threading.Timer(300.0, clear_memory).start()
+
+clear_memory()
 
 def process_question(question: str) -> str:
     try:
@@ -28,6 +37,10 @@ def process_question(question: str) -> str:
             )
 
             final_response = response.choices[0].message.content + "\n" + f"Referensi: {search_results['index']}"
+            
+            # Append the response content to the memory variable
+            memory.append(search_results['konten'])
+            print("Memory:", memory)
 
             print(final_response)
             return final_response
@@ -35,5 +48,10 @@ def process_question(question: str) -> str:
             return "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda."  
     except TypeError:
         return "Data diluar konteks yang ada, mohon masukan pertanyaan lainnya"
+
+# a global list variable to store the memory
+memory = []
+
+
 
 
