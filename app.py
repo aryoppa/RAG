@@ -30,8 +30,8 @@ async def chatbot_endpoint(request: Request, input_data: InputData) -> str:
     elif classify_input(text) == "greeting":
         return answer_greeting(text)
     elif classify_input(text) == "absurd_question":
-        return "Maaf, saya tidak mengerti pertanyaan Anda. Bisakah Anda mengajukan pertanyaan lain?"
+        return "Maaf, saya tidak mengerti pertanyaan Anda. Bisakah Anda mengajukan pertanyaan lain? dan "
     elif classify_input(text) == "question":
         return process_question(text)
     else:
-        return "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"        
+        return "Ada yang bisa saya bantu? Tolong berikan detail pertanyaannya agar saya bisa memberikan bantuan yang lebih spesifik."        
