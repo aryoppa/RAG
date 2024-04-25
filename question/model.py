@@ -45,7 +45,7 @@ def process_question(question: str) -> str:
             print(final_response)
             return final_response
         else: 
-            return "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda."  
+            return "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik"  
     except TypeError:
         return "Data diluar konteks yang ada, mohon masukan pertanyaan lainnya"
 
