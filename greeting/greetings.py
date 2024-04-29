@@ -34,7 +34,7 @@ def answer_greeting(greeting: str) -> str:
     try:
         prompt = [
             {"role": "system", "content": "Please provide your answer in either Bahasa Indonesia or English, accompanied by a suitable greeting. If you're uncertain, feel free to ask for clarification to user if you need more information."},
-            {"role": "user", "content": f"Please respond to the user's greeting with the context: {greeting}, and add 'Ada yang bisa saya bantu?, mohon masukkan pertanyaan secara detail'"},
+            {"role": "user", "content": f"Respond to the user's greeting by acknowledging it with the appropriate context, such as '{greeting}', and then add the phrase 'Ada yang bisa saya bantu?'"},
             ]
         response = ""
         for chunk in client.chat.completions.create(
