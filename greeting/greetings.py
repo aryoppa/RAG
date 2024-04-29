@@ -33,8 +33,8 @@ def classify_input(user_input: str) -> str:
 def answer_greeting(greeting: str) -> str:
     try:
         prompt = [
-            {"role": "system", "content": "Answer using Bahasa Indonesia or English with appropriate greeting."},
-            {"role": "user", "content": f"Please respond to the user's greeting with the context: {greeting}, and add 'Ada yang bisa saya bantu?'"},
+            {"role": "system", "content": "Please provide your answer in either Bahasa Indonesia or English, accompanied by a suitable greeting. If you're uncertain, feel free to ask for clarification to user if you need more information."},
+            {"role": "user", "content": f"Please respond to the user's greeting with the context: {greeting}, and add 'Ada yang bisa saya bantu?, mohon masukkan pertanyaan secara detail'"},
             ]
         response = ""
         for chunk in client.chat.completions.create(
