@@ -11,24 +11,6 @@ client = OpenAI(
 
 MODEL = "gpt-3.5-turbo"
 
-# Define function to classify user input as a greeting or question
-def classify_input(user_input: str) -> str:
-    """Classifies user input as a greeting or question."""
-    try:
-        prompt = [
-                {"role": "system", "content": f"classify these input: {user_input} as one of these label 'question' or 'greeting', or 'absurd_question'"},
-            ]
-        response = ""
-        for chunk in client.chat.completions.create(
-                model="gpt-3.5-turbo", messages=prompt, stream=True, temperature=0.2, max_tokens=20
-        ):
-            text = chunk.choices[0].delta.content
-            if text is not None:
-                response += text
-        return response.strip()
-    except Exception:
-        return "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
-    
 # Define function to generate response to user greeting
 def answer_greeting(greeting: str) -> str:
     try:

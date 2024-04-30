@@ -1,7 +1,9 @@
 from fastapi import FastAPI, Request
 from pydantic import BaseModel
+from classify.classify import classify_input
 from question.model import process_question
-from greeting.greetings import answer_greeting, classify_input
+from tracking.trackings import process_tracking
+from greeting.greetings import answer_greeting
 from fastapi.middleware.cors import CORSMiddleware
 
 # Inisialisasi aplikasi FastAPI
@@ -31,7 +33,9 @@ async def chatbot_endpoint(request: Request, input_data: InputData) -> str:
         return answer_greeting(text)
     elif classify_input(text) == "absurd_question":
         return "Maaf, saya tidak mengerti pertanyaan Anda. Bisakah Anda mengajukan pertanyaan lain? dan "
-    elif classify_input(text) == "question":
+    elif classify_input(text) == "faq_question":
         return process_question(text)
+    elif classify_input(text) == "tracking_question":
+        return process_tracking(text)
     else:
         return "Ada yang bisa saya bantu? Tolong berikan detail pertanyaannya agar saya bisa memberikan bantuan yang lebih spesifik."        
