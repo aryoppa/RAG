@@ -39,7 +39,7 @@ def classify_input(user_input: str) -> str:
                 4. Example Question: "cara tracking registrasi insw" \n
                 5. Example Question: "saya menemukan bug" \n
 
-            D. Category 'tracking_question' must be in the following format: \n 
+            D. Category 'tracking_question' must be include no Aju 26 digit or have ticket number using the following format: \n 
             
             Example category 'tracking_question':\n
                     1. Check Aju: \n
@@ -74,8 +74,8 @@ def classify_input(user_input: str) -> str:
             stop=["\n"],
         )
         # Extract the generated label from the completion
-        label = response.choices[0].text.strip()
-        print(label)
+        label = response.choices[0].message.content
+        print(f"Label: {label}")
         return label
     except Exception as e:
         print(f"Error: {e}")

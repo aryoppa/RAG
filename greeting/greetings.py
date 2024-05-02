@@ -18,14 +18,11 @@ def answer_greeting(greeting: str) -> str:
             {"role": "system", "content": "Please provide your answer in either Bahasa Indonesia or English, accompanied by a suitable greeting. If you're uncertain, feel free to ask for clarification to user if you need more information."},
             {"role": "user", "content": f"Respond to the user's greeting by acknowledging it with the appropriate context, such as '{greeting}', and then add the phrase 'Ada yang bisa saya bantu?'"},
             ]
-        response = ""
-        for chunk in client.chat.completions.create(
+        response = client.chat.completions.create(
                 model="gpt-3.5-turbo", messages=prompt, stream=True, temperature=0.8, max_tokens=100
-        ):
-            text = chunk.choices[0].delta.content
-            if text is not None:
-                response += text
-        return response.strip()
+        )
+        greeting = response.choices[0].message.content
+        return greeting.strip()
     except Exception as e:
         print(f"An error occurred: {e}")
         return "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
