@@ -75,12 +75,9 @@ def classify_input(user_input: str) -> str:
         )
         # Extract the generated label from the completion
         label = response.choices[0].text.strip()
-        
+        print(label)
         return label
     except Exception as e:
         print(f"Error: {e}")
         return "Sorry, I couldn't classify the input at the moment."
 
-# Example usage:
-user_input = "Hi there"
-print(classify_input(user_input))
