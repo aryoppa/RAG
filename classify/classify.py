@@ -70,15 +70,16 @@ def classify_input(user_input: str) -> str:
             model="gpt-3.5-turbo",
             messages=prompt,
             temperature=0.2,
-            max_tokens=20
+            max_tokens=20,
+            stop=["\n"],
         )
-        text = response.choices[0].delta.content
-        if text is not None:
-            return text.strip()
-        return "Unable to classify the input."
+        # Extract the generated label from the completion
+        label = response.choices[0].text.strip()
+        
+        return label
     except Exception as e:
         print(f"Error: {e}")
-        return "Sorry, I couldn't generate a response at the moment. How can I assist you?"
+        return "Sorry, I couldn't classify the input at the moment."
 
 # Example usage:
 user_input = "Hi there"
