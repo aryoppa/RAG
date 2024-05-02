@@ -20,7 +20,7 @@ def classify_input(user_input: str) -> str:
             You are required to classify the user input into one of the labels: 'greeting', 'absurd_question', 'faq_question', 'tracking_question'. \n
             Only one label should be assigned to each user input, and only return the label. \n
 
-            Here is an example of a user query for each category: \n
+            Here is an example of a user query category: \n
             A. Example 'absurd_question':\n
                 1. Example Question: "p" \n
                 2. Example Question: "jdjnc8e" \n
@@ -54,7 +54,11 @@ def classify_input(user_input: str) -> str:
 
                     3. Check Ticket BCare: \n
                     - Format: "Status ticket / Tracking ticket [ticket number]" \n
-                    - Example Question: "Status ticket 300001" \n    
+                    - Example Question: "Status ticket 300001" \n 
+
+
+            Please classify the user input into only one sentence of the labels: 'greeting', 'absurd_question', 'faq_question', 'tracking_question'. \n 
+            Only give one response. \n  
         """
         prompt = [
             {
