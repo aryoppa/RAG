@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
-from scipy.spatial.distance import cosine
+# from scipy.spatial.distance import cosine
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -29,7 +29,7 @@ def get_embedding(text, model=EMBEDDING_MODEL):
     return response.data[0].embedding
 
 def cosine_similarity(embedding1, embedding2):
-    return 1 - cosine(embedding1, embedding2)
+    return np.dot(embedding1, embedding2) / (np.linalg.norm(embedding1) * np.linalg.norm(embedding2))
 
 def search_notebook(df, question, top_n=TOP_N):
     df['embedding'] = df['embedding'].apply(eval).apply(np.array)
