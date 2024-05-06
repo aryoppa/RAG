@@ -18,7 +18,7 @@ def classify_input(user_input: str) -> str:
             You are a virtual assistant that helps to classify user input as a label. \n
             You will be provided with user queries. \n
             You are required to classify the user input into one of the labels: 'greeting', 'absurd_question', 'faq_question', 'tracking_question'. \n
-            Only one label should be assigned to each user input, and only return the label. \n
+            Only one label should be assigned to user input, and only return the label. \n
 
             Here is an example of a user query category: \n
             A. Example 'absurd_question':\n
@@ -59,8 +59,7 @@ def classify_input(user_input: str) -> str:
         prompt = [
             {
                 "role": "system",
-                "content": f"Base on context: {system_message} \n Please classify the user into on of these label: 'greeting', 'absurd_question', 'faq_question', 'tracking_question'. \n 
-                            Only give one response. \n  "
+                "content": f"Base on context: {system_message} \n Please classify the user into on of these label: 'greeting', 'absurd_question', 'faq_question', 'tracking_question'."
             },
             {
                 "role": "user",
@@ -76,7 +75,7 @@ def classify_input(user_input: str) -> str:
         )
         # Extract the generated label from the completion
         label = response.choices[0].message.content
-        print(f"Label: {label}")
+        # print(f"Label: {label}")
         return label
     except Exception as e:
         print(f"Error: {e}")
