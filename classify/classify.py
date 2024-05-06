@@ -55,15 +55,12 @@ def classify_input(user_input: str) -> str:
                     3. Check Ticket BCare: \n
                     - Format: "Status ticket / Tracking ticket [ticket number]" \n
                     - Example Question: "Status ticket 300001" \n 
-
-
-            Please classify the user input into only one sentence of the labels: 'greeting', 'absurd_question', 'faq_question', 'tracking_question'. \n 
-            Only give one response. \n  
         """
         prompt = [
             {
                 "role": "system",
-                "content": system_message
+                "content": f"Base on context: {system_message} \n Please classify the user into on of these label: 'greeting', 'absurd_question', 'faq_question', 'tracking_question'. \n 
+                            Only give one response. \n  "
             },
             {
                 "role": "user",
