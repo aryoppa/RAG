@@ -24,7 +24,7 @@ def process_question(question: str) -> str:
                 {"role": "user", "content": f"using the following context that consist of frequently asked questions (FAQ): {search_results['konten']}. Answer base on this question: {question}"},
             ]
             response = client.chat.completions.create(
-                model=MODEL, messages=prompt, temperature=0.2, max_tokens=1000
+                model=MODEL, messages=prompt, temperature=0.0, max_tokens=1000
             )
 
             final_response = response.choices[0].message.content + "\n" + f"Referensi: {search_results['index']}"
