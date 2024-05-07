@@ -10,7 +10,7 @@ client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
 
-TOP_N = 3
+TOP_N = 5
 MODEL = "gpt-3.5-turbo"
 
 def process_question(question: str) -> str:

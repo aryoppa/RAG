@@ -12,7 +12,7 @@ client = OpenAI(
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
 
-TOP_N = 3
+TOP_N = 5
 # DATASET_PATH = "question\\fix_pusatbantuan_embedding_text3small.csv"
 # EMBEDDING_MODEL = "text-embedding-3-small"
 DATASET_PATH = "question\\fix_pusatbantuan_embedding_ada002.csv"
