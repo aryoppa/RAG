@@ -43,7 +43,7 @@ Perekaman Perbaikan Portal
 Validasi Perbaikan
 ----------------------------------
 2.
-Statu aju 00004002503220231215000018 dengan status berikut:
+Status aju 00004002503220231215000018 dengan status berikut:
 
 No Daftar: 700098
 Daftar: 15-12-2023
@@ -84,7 +84,7 @@ def process_tracking(tracking: str) -> str:
             {'role':'system', 
             'content': system_message},    
             {'role':'user', 
-            'content': f"Answer user tracking questions:{tracking} based on the information provided in {data}, Give Detail information about the tracking status."}  
+            'content': f"Answer user tracking questions:{tracking} based on the information provided in {data}, Give Detail information about the tracking status that had exactly same 26 digit number."}  
         ] 
         response = client.chat.completions.create(
             model=MODEL, messages=prompt, temperature=0.1, max_tokens=1000
