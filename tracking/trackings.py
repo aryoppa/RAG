@@ -11,7 +11,7 @@ client = OpenAI(
 
 MODEL = "gpt-3.5-turbo"
 
-data = f"""
+data = """
 1.
 Status Aju 00003002604120231229000013 dengan status berikut:
 
@@ -71,8 +71,8 @@ Perekaman Perbaikan Portal
 
 2024-01-02 14:30:59.871
 Validasi Perbaikan.
-
 """
+
 def process_tracking(tracking: str) -> str:
     try:
         system_message =  f"""
