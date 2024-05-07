@@ -20,7 +20,7 @@ def process_question(question: str) -> str:
         search_results = search_notebook(df, question, top_n=TOP_N)
         if search_results:
             prompt = [
-                {"role": "system", "content": "You answer user questions with the information provided in the context. Answer using Bahasa Indonesia. Don't make up the answer. If the answer cannot be found, write 'I don't know.'"},
+                {"role": "system", "content": "You answer user questions with the information provided in the context. Answer using Bahasa Indonesia. Don't make up the answer. If the answer cannot be found, write 'I don't know.' Only use relevan data from context base on user question."},
                 {"role": "user", "content": f"using the following context that consist of frequently asked questions (FAQ): {search_results['konten']}. Answer base on this question: {question}"},
             ]
             response = client.chat.completions.create(
