@@ -55,27 +55,30 @@ def classify_input(user_input: str) -> str:
                     3. Check Ticket BCare: \n
                     - Format: "Status ticket / Tracking ticket [ticket number]" \n
                     - Example Question: "Status ticket 300001" \n 
+
+
+                Please classify {user_input} and give only 1 sentence consist of one of the labels: 'greeting', 'absurd_question', 'faq_question', 'tracking_question'. \n
         """
         prompt = [
             {
                 "role": "system",
-                "content": f"Base on context: {system_message} \n Please classify the user into on of these label: 'greeting', 'absurd_question', 'faq_question', 'tracking_question'."
+                "content": f"{system_message}"
             },
             {
                 "role": "user",
-                "content": f"Classify what label is this sentence: {user_input}"
+                "content": f"{user_input}"
             }
         ]
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model=MODEL,
             messages=prompt,
-            temperature=0.2,
+            temperature=0.0,
             max_tokens=20,
             stop=["\n"],
         )
         # Extract the generated label from the completion
         label = response.choices[0].message.content
-        # print(f"Label: {label}")
+        print(f"{label}")
         return label
     except Exception as e:
         print(f"Error: {e}")

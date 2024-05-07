@@ -19,7 +19,7 @@ def answer_greeting(greeting: str) -> str:
             {"role": "user", "content": f"Respond to the user's greeting by acknowledging it with the appropriate context, such as '{greeting}', and then add the phrase 'Ada yang bisa saya bantu?'"},
             ]
         response = client.chat.completions.create(
-                model="gpt-3.5-turbo", messages=prompt, temperature=0.8, max_tokens=100
+                model=MODEL, messages=prompt, temperature=0.8, max_tokens=100
         )
         greeting = response.choices[0].message.content
         return greeting.strip()
