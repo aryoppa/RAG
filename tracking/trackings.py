@@ -87,7 +87,7 @@ def process_tracking(tracking: str) -> str:
             'content': f"Answer user tracking questions:{tracking} based on the information provided in {data}, Give Detail information about the tracking status."}  
         ] 
         response = client.chat.completions.create(
-            model=MODEL, messages=prompt, temperature=0.2, max_tokens=1000
+            model=MODEL, messages=prompt, temperature=0.1, max_tokens=1000
         )
 
         final_response = response.choices[0].message.content
