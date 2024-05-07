@@ -78,7 +78,7 @@ def classify_input(user_input: str) -> str:
         )
         # Extract the generated label from the completion
         label = response.choices[0].message.content
-        print(f"{label}")
+        # print(f"{label}")
         return label
     except Exception as e:
         print(f"Error: {e}")

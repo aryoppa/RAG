@@ -53,7 +53,7 @@ def process_tracking(tracking: str) -> str:
             {'role':'system', 
             'content': system_message},    
             {'role':'user', 
-            'content': f"Answer user tracking questions:{tracking} based on the information provided in {data}"},  
+            'content': f"Answer user tracking questions:{tracking} based on the information provided in {data}, Give Detail information about the tracking status."},  
         ] 
         response = client.chat.completions.create(
             model=MODEL, messages=prompt, temperature=0.2, max_tokens=1000
