@@ -53,7 +53,7 @@ def process_tracking(tracking: str) -> str:
         )
 
         nomor_aju = response.choices[0].message.content.strip().upper()
-        print(nomor_aju)
+        # print(nomor_aju)
         # Make API call using the extracted "No Aju" value
         api_url = f"http://10.239.13.192/TrackingCeisaService/getStatus?noAju={nomor_aju}"
         # # Make the API call using the api_url

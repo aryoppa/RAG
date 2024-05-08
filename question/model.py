@@ -29,7 +29,7 @@ def process_question(question: str) -> str:
 
             final_response = response.choices[0].message.content + "\n" + f"Referensi: {search_results['index']}"
 
-            print(final_response)
+            # print(final_response)
             return final_response
         else: 
             return "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik"  
