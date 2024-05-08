@@ -20,15 +20,16 @@ def process_tracking(tracking: str) -> str:
         30101A0B50EA2013042900003B \n
 
         so in this case, the your task is to only return '30101A0B50EA2013042900003B' from the tracking number.
+        dont include the 'Nomor Aju' or any sentence other than value in  word in the response.
         """
         prompt = [  
             {'role':'system', 
             'content': system_message},    
             {'role':'user', 
-            'content': f"Extract Nomor Aju from tracking number : {tracking}."}  
+            'content': f"Extract: {tracking}."}  
         ] 
         response = client.chat.completions.create(
-            model=MODEL, messages=prompt, temperature=0.1, max_tokens=500
+            model=MODEL, messages=prompt, temperature=0.0, max_tokens=500
         )
 
         no_aju = response.choices[0].message.content.strip().upper()

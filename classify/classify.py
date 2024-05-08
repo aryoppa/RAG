@@ -42,19 +42,11 @@ def classify_input(user_input: str) -> str:
             D. Category 'tracking_question' must be include no Aju 26 digit or have ticket number using the following format: \n 
             
             Example category 'tracking_question':\n
-                    1. Check Aju: \n
-                    - Format: "Status aju aju / Respon aju [Aju 26 digit]" \n
+                Here user ask about tracking status of aju. \n
+                Check Aju: \n
+                    - Example Format: "Status aju aju / Respon aju /Status pengajuan [Aju 26 digit]"\n
                     - Example Question: "Status aju 00009001061720231212991201" \n
-
-                    2. Check NPE/SPPB/SPTNP: \n
-                    - Format: "Check sptnp/npw/sppb aju [Aju 26 digit]" \n
-                    - Example Question: "sptnp aju 00009001061720231212991201" \n
-                    - Example Question: "sppb aju 00009001061720231212991201" \n
-                    - Example Question: "npe aju 00009001061720231212991201" \n
-
-                    3. Check Ticket BCare: \n
-                    - Format: "Status ticket / Tracking ticket [ticket number]" \n
-                    - Example Question: "Status ticket 300001" \n 
+                    - Example Question: "Status pengajuan 00009001061720231212991201" \n
 
 
                 Please classify {user_input} and give only 1 sentence consist of one of the labels: 'greeting', 'absurd_question', 'faq_question', 'tracking_question'. \n
