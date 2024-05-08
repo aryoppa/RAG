@@ -47,7 +47,8 @@ def classify_input(user_input: str) -> str:
                     - Example Format: "Status aju aju / Respon aju /Status pengajuan [Aju 26 digit]"\n
                     - Example Question: "Status aju 00009001061720231212991201" \n
                     - Example Question: "Status pengajuan 00009001061720231212991201" \n
-
+                    - Example Question: "Respon aju 0009001061720231212991201" \n
+                or other related format that means user ask about tracking status of aju but must be include 26 Digit Number(26 digit number consisting of number and alphabet)\n
 
                 Please classify {user_input} and give only 1 sentence consist of one of the labels: 'greeting', 'absurd_question', 'faq_question', 'tracking_question'. \n
         """

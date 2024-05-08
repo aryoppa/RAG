@@ -2,7 +2,6 @@ import os
 from openai import OpenAI
 from dotenv import load_dotenv
 import requests  
-import json
 
 # Set OpenAI API key
 load_dotenv(override=True)
@@ -40,7 +39,7 @@ def process_tracking(tracking: str) -> str:
         example: \n
         30101A0B50EA2013042900003B \n
 
-        so in this case, the your task is to only return '30101A0B50EA2013042900003B' from the tracking number.
+        so in this case, your task is to only return '30101A0B50EA2013042900003B' from the tracking number.
         dont include the 'Nomor Aju' or any sentence other than value in  word in the response.
         """
         prompt = [  
@@ -60,9 +59,13 @@ def process_tracking(tracking: str) -> str:
         # # Make the API call using the api_url
         data_raw = requests.get(api_url)
         data_raw = data_raw.json()
-        # Extracting required fields
-        extracted_info_str = extract_information_as_string(data_raw)
-        return extracted_info_str
+        
+        if "HEADER" not in data_raw or not data_raw["HEADER"]:
+            return "Data tidak ditemukan, mohon masukan nomor aju yang benar"
+        else:
+            # Extracting required fields
+            extracted_info_str = extract_information_as_string(data_raw)
+            return extracted_info_str
         # return api_url
     except TypeError:
         return "Data diluar konteks yang ada, mohon masukan pertanyaan lainnya"
