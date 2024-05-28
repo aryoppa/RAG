@@ -28,27 +28,21 @@ def process_question(question: str) -> str:
         # Jika hasil pencarian ditemukan
         if search_results:
 
-            # Instruksi Prompt Sistem
-            system_content = f'''
-            Your task is to answer user question with correct and relevant answer.
-            You always answers user input with information directly from the “FAQ Data” .
-            You are closed-domain and never engages in topics unrelated to FAQ Data Context.
-            If the question can't be answered based on the context, say “Maaf saya tidak dapat menemukan informasi terkait” or similar.            
-            '''
+            # Instruksi Prompt Sistem, Perhatikan pembuatan prompt
+            system_content = f"Your task is to answer user question with correct and relevant answer. You always answers user input with information directly from the 'FAQ Data' .You are closed-domain and never engages in topics unrelated to provided context and question. If the question can't answered the question, say 'Maaf saya tidak dapat menemukan informasi terkait' or similar."
 
             prompt = [
                 # Pesan sistem memberikan instruksi kepada model tentang bagaimana menjawab pertanyaan, dan hasil semantic search FAQ
                 {"role": "system", "content": system_content},
                 # Pesan pengguna pertanyaan pengguna
-                {"role": "user", "content": f"Base on these list of FAQ Data Context: {search_results['konten']}, Answer this question: {question}. Only give relevant answer"},
+                {"role": "user", "content": f"Base on these list of FAQ Data Context: {search_results['konten']}, Answer this question: {question}. Only give relevant and correct answer"},
             ]
 
-            print(prompt)
             # Mengirimkan permintaan ke API OpenAI untuk menghasilkan respons
             response = client.chat.completions.create(
                 model=MODEL,  # Model yang digunakan untuk menghasilkan respons
                 messages=prompt,  # Pesan yang diberikan ke model
-                temperature=0.0,  # Mengatur randomisasi output menjadi deterministik
+                temperature=0,  # Mengatur randomisasi output menjadi deterministik
                 max_tokens=1000  # Jumlah maksimum token dalam respons
             )
 

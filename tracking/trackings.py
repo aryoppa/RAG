@@ -13,7 +13,7 @@ client = OpenAI(
 )
 
 # Menentukan model yang akan digunakan untuk interaksi dengan OpenAI API
-MODEL = "gpt-3.5-turbo"
+MODEL = "gpt-3.5-turbo-0125"
 
 # Fungsi untuk mengekstrak informasi dari data mentah dari Ceaisa menjadi string terformat, dan hanya mengambil beberapa bagian informasi saja
 def extract_information_as_string(data_raw):
@@ -46,7 +46,7 @@ def process_tracking(tracking: str) -> str:
         30101A0B50EA2013042900003B \n
 
         so in this case, your task is to only return '30101A0B50EA2013042900003B' from the tracking number.
-        dont include the 'Nomor Aju', 'Nomor Pengajuan'or any sentence other than value in  word in the response.
+        dont include the 'Nomor Aju', 'Nomor Pengajuan' or any sentence other than value in  word in the response.
         """
         # Membuat prompt untuk dikirim ke OpenAI API
         prompt = [  
