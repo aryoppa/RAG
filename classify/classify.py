@@ -1,4 +1,5 @@
 import os
+import time
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -10,6 +11,7 @@ client = OpenAI(
 )
 
 MODEL = "gpt-3.5-turbo"
+# MODEL = "gpt-4o"
 
 # Define function to classify user input as a greeting or question
 def classify_input(user_input: str) -> str:
@@ -62,6 +64,7 @@ def classify_input(user_input: str) -> str:
                 "content": f"{user_input}"
             }
         ]
+        
         response = client.chat.completions.create(
             model=MODEL,
             messages=prompt,
@@ -71,7 +74,6 @@ def classify_input(user_input: str) -> str:
         )
         # Extract the generated label from the completion
         label = response.choices[0].message.content
-        # print(f"{label}")
         return label
     except Exception as e:
         print(f"Error: {e}")

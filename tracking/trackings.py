@@ -65,7 +65,8 @@ def process_tracking(tracking: str) -> str:
         else:
             # Extracting required fields
             extracted_info_str = extract_information_as_string(data_raw)
-            return extracted_info_str
+            return {"message":extracted_info_str, "index":""}
+        
         # return api_url
     except TypeError:
         return "Data diluar konteks yang ada, mohon masukan pertanyaan lainnya"

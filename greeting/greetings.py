@@ -22,7 +22,7 @@ def answer_greeting(greeting: str) -> str:
                 model=MODEL, messages=prompt, temperature=0.8, max_tokens=100
         )
         greeting = response.choices[0].message.content
-        return greeting.strip()
+        return {"message":greeting.strip(), "index":""}
     except Exception as e:
         print(f"An error occurred: {e}")
         return "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
