@@ -78,4 +78,5 @@ def process_tracking(tracking: str) -> str:
             return {"message":extracted_info_str, "index":""}
         
     except TypeError:
-        return "Data diluar konteks yang ada, mohon masukan pertanyaan lainnya"
+        error = "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
+        return {"message": error, "index": ""}

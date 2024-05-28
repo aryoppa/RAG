@@ -47,5 +47,5 @@ def answer_greeting(greeting: str) -> str:
     
     except Exception as e:
         # Menangani pengecualian dan mengembalikan pesan kesalahan default
-        print(f"An error occurred: {e}")
-        return "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
+        error = "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
+        return {"message": error, "index": ""}

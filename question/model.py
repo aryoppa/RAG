@@ -55,8 +55,9 @@ def process_question(question: str) -> str:
             return {"message": final_response, "index": indexes}
         else:
             # Jika tidak ada hasil pencarian yang ditemukan
-            return "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik"
-    
+            no_result = "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik"
+            return {"message": no_result, "index": ""}
     except TypeError:
         # Menangani pengecualian jika terjadi TypeError
-        return "Data diluar konteks yang ada, mohon masukan pertanyaan lainnya"
+        error = "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
+        return {"message": error, "index": ""}

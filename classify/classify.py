@@ -85,5 +85,5 @@ def classify_input(user_input: str) -> str:
         return label
     except Exception as e:
         # Menangani pengecualian dan mengembalikan pesan kesalahan default
-        print(f"Error: {e}")
-        return "Maaf, saya tidak dapat mengklasifikasikan input saat ini."
+        error = "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
+        return {"message": error, "index": ""}
