@@ -10,8 +10,8 @@ API ini memberikan layanan chatbot menggunakan model bahasa berbasis OpenAI, ter
    
 3. **model.py**: Memproses pertanyaan pengguna dan memberikan respons berdasarkan konteks data yang diberikan.
    
-4. **tracking.py**: Menangani permintaan untuk melacak status pengajuan dengan mengekstrak nomor aju dari input pengguna dan mengambil informasi terkait dari sumber data eksternal.
-   
+4. **tracking.py**: Menangani permintaan untuk melacak status pengajuan dengan mengekstrak nomor aju dari input pengguna dan mengambil informasi terkait dari sumber data eksternal. Menggunakan nomor aju yang diekstrak, permintaan API dibuat ke layanan API Ceisa
+   - `http://10.239.13.192/TrackingCeisaService/getStatus?noAju={nomor_aju}`
 5. **utils.py**: Berisi fungsi utilitas untuk memuat data, menghasilkan embedding teks, menghitung kemiripan kosinus, dan melakukan pencarian dalam dataset.
     - `get_embedding`: Fungsi untuk menghasilkan embedding untuk input teks.
     - `load_data`: Fungsi untuk memuat data untuk model.
