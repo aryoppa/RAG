@@ -62,10 +62,10 @@ def search_notebook(df, question, top_n=TOP_N):
 
     # Menambahkan hasil pencarian ke struktur dokumen yang mirip
     for rows in top_results.itertuples():
+        # Hanya mengambil data yang memiliki simmiliarity diatas 50%
         if rows.similarity < 0.5:
             similar_docs["konten"] += "Mohon Maaf saya tidak dapat menemukan data terkait"
         else:
             similar_docs["konten"] += rows.konten
             similar_docs["index"].append(rows.index)
-    
     return similar_docs

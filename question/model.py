@@ -14,7 +14,7 @@ client = OpenAI(
 
 # Menentukan jumlah hasil pencarian teratas dan model yang akan digunakan
 TOP_N = 5
-MODEL = "gpt-3.5-turbo"
+MODEL = "gpt-3.5-turbo-0125"
 # MODEL = "gpt-4o"
 
 # Mendefinisikan fungsi untuk memproses pertanyaan pengguna
@@ -25,22 +25,25 @@ def process_question(question: str) -> str:
         
         # Mencari hasil yang relevan dalam notebook berdasarkan pertanyaan pengguna
         search_results = search_notebook(df, question, top_n=TOP_N)
-        
         # Jika hasil pencarian ditemukan
         if search_results:
+
+            # Instruksi Prompt Sistem
+            system_content = f'''
+            Your task is to answer user question with correct and relevant answer.
+            You always answers user input with information directly from the “FAQ Data” .
+            You are closed-domain and never engages in topics unrelated to FAQ Data Context.
+            If the question can't be answered based on the context, say “Maaf saya tidak dapat menemukan informasi terkait” or similar.            
+            '''
+
             prompt = [
-                {
-                    # Pesan sistem memberikan instruksi kepada model tentang bagaimana menjawab pertanyaan
-                    "role": "system",
-                    "content": "You answer user questions with the information provided in the context. Answer using Bahasa Indonesia. Don't make up the answer. If the answer cannot be found, write 'Maaf saya tidak tahu'. Only provide relevant and correct answers, you are strictly prohibited from providing irrelevant and incorrect answers, It's better to say you don't know the answer, than to give the wrong answer"
-                },
-                {
-                    # Pesan pengguna berisi hasil pencarian dan pertanyaan pengguna
-                    "role": "user",
-                    "content": f"using the following context that consist of frequently asked questions (FAQ) data: {search_results['konten']}. Answer this question: {question}. Only give relevant and correct answers"
-                }
+                # Pesan sistem memberikan instruksi kepada model tentang bagaimana menjawab pertanyaan, dan hasil semantic search FAQ
+                {"role": "system", "content": system_content},
+                # Pesan pengguna pertanyaan pengguna
+                {"role": "user", "content": f"Base on these list of FAQ Data Context: {search_results['konten']}, Answer this question: {question}. Only give relevant answer"},
             ]
 
+            print(prompt)
             # Mengirimkan permintaan ke API OpenAI untuk menghasilkan respons
             response = client.chat.completions.create(
                 model=MODEL,  # Model yang digunakan untuk menghasilkan respons
