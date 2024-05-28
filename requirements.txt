@@ -1,7 +1,8 @@
-streamlit
-pandas
-numpy
 openai
 python-dotenv
-scipy
+pandas
+numpy
 requests
+uvicorn
+fastapi
+scipy

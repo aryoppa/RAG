@@ -3,19 +3,23 @@ import time
 from openai import OpenAI
 from dotenv import load_dotenv
 
-# Set OpenAI API key
+# Memuat kunci API OpenAI dari file .env
 load_dotenv(override=True)
+
+# Inisialisasi klien OpenAI dengan kunci API
 client = OpenAI(
-    # This is the default and can be omitted
+    # Ini adalah default dan bisa diabaikan
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
 
+# Menentukan model yang akan digunakan
 MODEL = "gpt-3.5-turbo"
 # MODEL = "gpt-4o"
 
-# Define function to classify user input as a greeting or question
+# Mendefinisikan fungsi untuk mengklasifikasikan input pengguna sebagai salam atau pertanyaan
 def classify_input(user_input: str) -> str:
     try:
+        # Pesan sistem yang memberikan instruksi kepada model
         system_message =  f"""
             You are a virtual assistant that helps to classify user input as a label. \n
             You will be provided with user queries. \n
@@ -54,6 +58,8 @@ def classify_input(user_input: str) -> str:
 
                 Please classify {user_input} and give only 1 sentence consist of one of the labels: 'greeting', 'absurd_question', 'faq_question', 'tracking_question'. \n
         """
+        
+        # Membuat prompt dengan dua pesan: sistem dan pengguna
         prompt = [
             {
                 "role": "system",
@@ -65,17 +71,19 @@ def classify_input(user_input: str) -> str:
             }
         ]
         
+        # Mengirimkan permintaan ke API OpenAI untuk menghasilkan respons
         response = client.chat.completions.create(
             model=MODEL,
             messages=prompt,
-            temperature=0.0,
-            max_tokens=20,
-            stop=["\n"],
+            temperature=0.0,  # Mengatur randomisasi output menjadi deterministik
+            max_tokens=20,    # Jumlah maksimum token dalam respons
+            stop=["\n"],      # Menghentikan respons di karakter newline
         )
-        # Extract the generated label from the completion
+        
+        # Ekstrak label yang dihasilkan dari respons
         label = response.choices[0].message.content
         return label
     except Exception as e:
+        # Menangani pengecualian dan mengembalikan pesan kesalahan default
         print(f"Error: {e}")
-        return "Sorry, I couldn't classify the input at the moment."
-
+        return "Maaf, saya tidak dapat mengklasifikasikan input saat ini."

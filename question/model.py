@@ -1,42 +1,62 @@
 import os
-import time
 from question.utils import load_data, search_notebook
 from openai import OpenAI
 from dotenv import load_dotenv
 
-# Set OpenAI API key
+# Memuat kunci API OpenAI dari file .env
 load_dotenv(override=True)
+
+# Inisialisasi klien OpenAI dengan kunci API
 client = OpenAI(
-    # This is the default and can be omitted
+    # Ini adalah default dan bisa diabaikan
     api_key=os.environ.get("OPENAI_API_KEY"),
 )
 
+# Menentukan jumlah hasil pencarian teratas dan model yang akan digunakan
 TOP_N = 5
 MODEL = "gpt-3.5-turbo"
 # MODEL = "gpt-4o"
 
+# Mendefinisikan fungsi untuk memproses pertanyaan pengguna
 def process_question(question: str) -> str:
     try:
-        # Load data for each question
+        # Memuat data yang dibutuhkan untuk setiap pertanyaan
         df = load_data()
+        
+        # Mencari hasil yang relevan dalam notebook berdasarkan pertanyaan pengguna
         search_results = search_notebook(df, question, top_n=TOP_N)
+        
+        # Jika hasil pencarian ditemukan
         if search_results:
             prompt = [
-                {"role": "system", "content": "You answer user questions with the information provided in the context. Answer using Bahasa Indonesia. Don't make up the answer. If the answer cannot be found, write 'I don't know.' Only use relevan data from context base on user question."},
-                {"role": "user", "content": f"using the following context that consist of frequently asked questions (FAQ): {search_results['konten']}. Answer base on this question: {question}"},
+                {
+                    # Pesan sistem memberikan instruksi kepada model tentang bagaimana menjawab pertanyaan
+                    "role": "system",
+                    "content": "You answer user questions with the information provided in the context. Answer using Bahasa Indonesia. Don't make up the answer. If the answer cannot be found, write 'I don't know.' Only use relevant data from context based on user question."
+                },
+                {
+                    # Pesan pengguna berisi hasil pencarian dan pertanyaan pengguna
+                    "role": "user",
+                    "content": f"using the following context that consist of frequently asked questions (FAQ): {search_results['konten']}. Answer based on this question: {question}"
+                }
             ]
 
+            # Mengirimkan permintaan ke API OpenAI untuk menghasilkan respons
             response = client.chat.completions.create(
-                model=MODEL, messages=prompt, temperature=0.0, max_tokens=1000
+                model=MODEL,  # Model yang digunakan untuk menghasilkan respons
+                messages=prompt,  # Pesan yang diberikan ke model
+                temperature=0.0,  # Mengatur randomisasi output menjadi deterministik
+                max_tokens=1000  # Jumlah maksimum token dalam respons
             )
 
+            # Mengambil respons dari hasil yang dihasilkan oleh model
             final_response = response.choices[0].message.content
             indexes = str(search_results["index"])
-            return {"message":final_response, "index":indexes}
-        else: 
-            return "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik"  
+            return {"message": final_response, "index": indexes}
+        else:
+            # Jika tidak ada hasil pencarian yang ditemukan
+            return "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik"
+    
     except TypeError:
+        # Menangani pengecualian jika terjadi TypeError
         return "Data diluar konteks yang ada, mohon masukan pertanyaan lainnya"
-
-
-
