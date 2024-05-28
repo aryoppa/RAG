@@ -15,7 +15,7 @@ client = OpenAI(
 # Menentukan model yang akan digunakan untuk interaksi dengan OpenAI API
 MODEL = "gpt-3.5-turbo"
 
-# Fungsi untuk mengekstrak informasi dari data mentah menjadi string terformat
+# Fungsi untuk mengekstrak informasi dari data mentah dari Ceaisa menjadi string terformat, dan hanya mengambil beberapa bagian informasi saja
 def extract_information_as_string(data_raw):
     # Ekstraksi informasi HEADER
     header_info = data_raw["HEADER"][0]
