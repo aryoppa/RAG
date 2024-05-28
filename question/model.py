@@ -32,12 +32,12 @@ def process_question(question: str) -> str:
                 {
                     # Pesan sistem memberikan instruksi kepada model tentang bagaimana menjawab pertanyaan
                     "role": "system",
-                    "content": "You answer user questions with the information provided in the context. Answer using Bahasa Indonesia. Don't make up the answer. If the answer cannot be found, write 'I don't know.' Only use relevant data from context based on user question."
+                    "content": "You answer user questions with the information provided in the context. Answer using Bahasa Indonesia. Don't make up the answer. If the answer cannot be found, write 'Maaf saya tidak tahu'. Only provide relevant and correct answers, you are strictly prohibited from providing irrelevant and incorrect answers, It's better to say you don't know the answer, than to give the wrong answer"
                 },
                 {
                     # Pesan pengguna berisi hasil pencarian dan pertanyaan pengguna
                     "role": "user",
-                    "content": f"using the following context that consist of frequently asked questions (FAQ): {search_results['konten']}. Answer based on this question: {question}"
+                    "content": f"using the following context that consist of frequently asked questions (FAQ) data: {search_results['konten']}. Answer this question: {question}. Only give relevant and correct answers"
                 }
             ]
 
