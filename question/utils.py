@@ -39,7 +39,11 @@ def get_embedding(text, model=EMBEDDING_MODEL):
 
 # Fungsi untuk menghitung kemiripan kosinus antara dua embedding
 def cosine_similarity(embedding1, embedding2):
-    return np.dot(embedding1, embedding2) / (np.linalg.norm(embedding1) * np.linalg.norm(embedding2))
+    dot_product = np.dot(embedding1, embedding2)
+    magnitude_embedding1 = np.linalg.norm(embedding1)
+    magnitude_embedding2 = np.linalg.norm(embedding2)
+    cosine_similarity= dot_product / (magnitude_embedding1 * magnitude_embedding2)
+    return cosine_similarity
 
 # Fungsi untuk mencari hasil yang relevan dalam notebook berdasarkan pertanyaan pengguna
 def search_notebook(df, question, top_n=TOP_N):
