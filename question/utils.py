@@ -39,6 +39,7 @@ def get_embedding(text, model=EMBEDDING_MODEL):
 
 # Fungsi untuk menghitung kemiripan kosinus antara dua embedding
 def cosine_similarity(embedding1, embedding2):
+    # Rumus Cosine Similarity
     dot_product = np.dot(embedding1, embedding2)
     magnitude_embedding1 = np.linalg.norm(embedding1)
     magnitude_embedding2 = np.linalg.norm(embedding2)
