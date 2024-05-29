@@ -12,7 +12,7 @@ Struktur Proyek
 2. **greeting.py**: Berisi fungsi untuk merespons salam pengguna dengan pesan yang sesuai.
 
 3. **model.py**: Memproses pertanyaan pengguna dan memberikan respons berdasarkan konteks data yang diberikan.
-
+   - understanding_question -> process_question
 4. **tracking.py**: Menangani permintaan untuk melacak status pengajuan dengan mengekstrak nomor aju dari input pengguna dan mengambil informasi terkait dari sumber data eksternal.Menggunakan nomor aju yang diekstrak, permintaan API dibuat ke layanan API Ceisa
    - `http://10.239.13.192/TrackingCeisaService/getStatus?noAju={nomor_aju}`
    

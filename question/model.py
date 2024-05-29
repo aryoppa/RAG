@@ -119,3 +119,51 @@ def process_question(question: str) -> str:
         # Menangani pengecualian jika terjadi TypeError
         error = "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
         return {"message": error, "index": ""}
+
+
+# Mendefinisikan fungsi untuk melakuka validasi apakah jawaban dari "process_question" sesuai dengan pertanyaan dan referensi yang diberikan
+def validate_question(question: str) -> str:
+    try:
+        # Memuat data yang dibutuhkan untuk setiap pertanyaan
+        df = load_data()
+
+        # Mencari hasil yang relevan dalam notebook berdasarkan pertanyaan pengguna
+        search_results = search_notebook(df, question, top_n=TOP_N)
+        # Jika hasil pencarian ditemukan
+        if search_results:
+            # Instruksi Prompt Sistem, Perhatikan pembuatan prompt
+            system_content = f"""
+            """
+
+            prompt = [
+                # Pesan sistem memberikan instruksi kepada model tentang bagaimana menjawab pertanyaan, dan hasil semantic search FAQ
+                {"role": "system", "content": system_content},
+                # Pesan pengguna pertanyaan pengguna
+                {"role": "user", "content": f"""\n
+                """},
+            ]
+
+            # print(prompt)
+            # Mengirimkan permintaan ke API OpenAI untuk menghasilkan respons
+            response = client.chat.completions.create(
+                model=MODEL,  # Model yang digunakan untuk menghasilkan respons
+                messages=prompt,  # Pesan yang diberikan ke model
+                temperature=0,  # Mengatur randomisasi output menjadi deterministik
+                max_tokens=150  # Jumlah maksimum token dalam respons
+            )
+
+            # Mengambil respons dari hasil yang dihasilkan oleh model
+            final_response = response.choices[0].message.content
+            indexes = str(search_results["index"])
+            return {"message": final_response, "index": indexes}
+        else:
+            # Jika tidak ada hasil pencarian yang ditemukan
+            no_result = "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik"
+            return {"message": no_result, "index": ""}
+    except TypeError:
+        # Menangani pengecualian jika terjadi TypeError
+        error = "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
+        return {"message": error, "index": ""}
+    
+
+    # Bisa gunakan ai untuk review dan klasifikasi apakah jawaba telah sesuai base on referece, beri label TRUE or FALSE, True maka langsung lepar hasi process_question, if False maka bilang maaf informasi anda tidak ditemukan
