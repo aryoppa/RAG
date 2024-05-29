@@ -17,6 +17,57 @@ TOP_N = 5
 MODEL = "gpt-3.5-turbo-0125"
 # MODEL = "gpt-4o"
 
+# Mendefinisikan fungsi untuk mendapatkan inti pertanyaan dari user
+def understanding_question(question: str) -> str:
+    # Instruksi Prompt Sistem, Perhatikan pembuatan prompt
+    system_content = f"""
+        You are a virtual assistant that helps find the core essence of user questions. \n
+        You will be provided with user queries or questions. \n
+        Review and understand the context of the user's question, and return it in the same language based on the core essence of the question. \n
+        Give the results in a neutral language format which is not in the form of a question sentence.\n
+        Never paraphrase or explain abbreviations or words you do not understand. \n
+        You are a closed-domain assistant and never engage in topics unrelated to the provided context and question. \n
+
+        #EXAMPLE 1: \n
+        Input: "SSM qc apa?" \n
+        Response: "penjelasan tentang ssm qc" \n
+
+        #EXAMPLE 2: \n
+        Input: "pelabuhan yang sudah implementasi ssm pengangkut" \n
+        Response: "list pelabuhan yang sudah mengimplementasikan ssm pengangkut" \n
+
+        #EXAMPLE 3: \n
+        Input: "Lapor bug" \n
+        Response: "Cara melakukan pelaporan bug" \n
+    """
+
+    prompt = [
+        # Pesan sistem memberikan instruksi kepada model tentang bagaimana menjawab pertanyaan, dan hasil semantic search FAQ
+        {"role": "system", "content": system_content},
+        # Pesan pengguna pertanyaan pengguna
+        {"role": "user", "content": question},
+    ]
+
+    try:
+        # Mengirimkan permintaan ke API OpenAI untuk menghasilkan respons
+        response = client.chat.completions.create(
+            model=MODEL,  # Model yang digunakan untuk menghasilkan respons
+            messages=prompt,  # Pesan yang diberikan ke model
+            temperature=0,  # Mengatur randomisasi output menjadi deterministik
+            max_tokens=150  # Jumlah maksimum token dalam respons
+        )
+
+        # Mengambil respons dari hasil yang dihasilkan oleh model
+        final_response = response.choices[0].message.content.strip()
+        # print(f"Raw Question: {question}")
+        # print(f"Understanding Question: {final_response}")
+        return final_response
+
+    except Exception as e:
+        # Menangani pengecualian jika terjadi kesalahan pada API call
+        error = "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
+        return {"message": error, "index": ""}
+
 # Mendefinisikan fungsi untuk memproses pertanyaan pengguna
 def process_question(question: str) -> str:
     try:
@@ -47,6 +98,7 @@ def process_question(question: str) -> str:
                 """},
             ]
 
+            # print(prompt)
             # Mengirimkan permintaan ke API OpenAI untuk menghasilkan respons
             response = client.chat.completions.create(
                 model=MODEL,  # Model yang digunakan untuk menghasilkan respons

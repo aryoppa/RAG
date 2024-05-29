@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from classify.classify import classify_input
 from question.model import process_question
+from question.model import understanding_question
 from tracking.trackings import process_tracking
 from greeting.greetings import answer_greeting
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,20 +30,21 @@ class InputData(BaseModel):
 # Definisikan API endpoint untuk menangani permintaan input dan mengembalikan respons
 @app.post("/chatbot/")
 async def chatbot_endpoint(input_data: InputData) -> str:
-
-    # Menghilangkan spasi dan mengonversi teks input menjadi huruf kecil
     text = input_data.text.strip().lower()
+    classification = classify_input(text)
+    
     if text in ["hi", "halo"]:
         response = answer_greeting(text)
-    elif classify_input(text) == "greeting":
+    elif classification == "greeting":
         response = answer_greeting(text)
-    elif classify_input(text) == "absurd_question":
-        response = {"message":"Maaf, saya tidak mengerti pertanyaan Anda. Bisakah Anda mengajukan pertanyaan lain?", "index":""}
-    elif classify_input(text) == "faq_question":
-        response = process_question(text)
-    elif classify_input(text) == "tracking_question":
+    elif classification == "absurd_question":
+        response = {"message": "Maaf, saya tidak mengerti pertanyaan Anda. Bisakah Anda mengajukan pertanyaan lain?", "index": ""}
+    elif classification == "faq_question":
+        core_question = understanding_question(text)
+        response = process_question(core_question)
+    elif classification == "tracking_question":
         response = process_tracking(text)
     else:
-        response = {"message":"Ada yang bisa saya bantu? Tolong berikan detail pertanyaannya agar saya bisa memberikan bantuan yang lebih spesifik.", "index":""}
-    return JSONResponse(content = {"data":response})
-            
+        response = {"message": "Ada yang bisa saya bantu? Tolong berikan detail pertanyaannya agar saya bisa memberikan bantuan yang lebih spesifik.", "index": ""}
+    
+    return JSONResponse(content={"data": response})
