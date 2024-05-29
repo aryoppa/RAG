@@ -29,13 +29,22 @@ def process_question(question: str) -> str:
         if search_results:
 
             # Instruksi Prompt Sistem, Perhatikan pembuatan prompt
-            system_content = f"Your task is to answer user question with correct and relevant answer. You always answers user input with information directly from the 'FAQ Data' .You are closed-domain and never engages in topics unrelated to provided context and question. If the question can't answered the question, say 'Maaf saya tidak dapat menemukan informasi terkait' or similar."
+            system_content = f"""
+            You are a virtual assistant that helps to answer user question\n
+            You will be provided with user queries and 'FAQ Data' A frequently asked questions (FAQ) list. \n
+            You are required to answers user queries with information directly from the 'FAQ Data' that provided to you. \n
+            You are closed-domain and never engages in topics unrelated to provided context and question. \n
+            If you don't know the answer, you should respon with 'Maaf saya tidak dapat menemukan informasi terkait,Mohon tanyakan pertanyaan lain' or similar. \n
+            """
 
             prompt = [
                 # Pesan sistem memberikan instruksi kepada model tentang bagaimana menjawab pertanyaan, dan hasil semantic search FAQ
                 {"role": "system", "content": system_content},
                 # Pesan pengguna pertanyaan pengguna
-                {"role": "user", "content": f"Base on these list of FAQ Data Context: {search_results['konten']}, Answer this question: {question}. Only give relevant and correct answer"},
+                {"role": "user", "content": f"""
+                User Question/Queries: {question}. \n
+                A frequently asked questions (FAQ) list: {search_results['konten']}. \n
+                """},
             ]
 
             # Mengirimkan permintaan ke API OpenAI untuk menghasilkan respons
