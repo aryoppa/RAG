@@ -78,14 +78,15 @@ def process_question(question: str) -> str:
         search_results = search_notebook(df, question, top_n=TOP_N)
         # Jika hasil pencarian ditemukan
         if search_results:
-
             # Instruksi Prompt Sistem, Perhatikan pembuatan prompt
             system_content = f"""
             You are a virtual assistant that helps to answer user question\n
             You will be provided with user queries and 'FAQ Data' A frequently asked questions (FAQ) list. \n
-            You are required to answers user queries with information directly from the 'FAQ Data' that provided to you. \n
-            If you don't know the answer, you should only say 'Maaf saya tidak dapat menemukan informasi terkait,Mohon tanyakan pertanyaan lain' or similar. \n
+            You are required to answers user queries with information directly from the 'FAQ Data' that provided to you. \n  
             You are closed-domain and never engages in topics unrelated to provided context and question. \n
+            If you dont know the answer, say you don't know\n  
+            You are require to answer user question in formal bahasa indonesia.\n
+            You are required to review again your answer, make sure give correct response base on clear instruction above. \n
             """
 
             prompt = [
