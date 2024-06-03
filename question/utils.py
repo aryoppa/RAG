@@ -15,7 +15,7 @@ client = OpenAI(
 )
 
 # Menentukan jumlah hasil pencarian teratas dan model embedding yang akan digunakan
-TOP_N = 5
+TOP_N = 3
 # DATASET_PATH = "question\\fix_pusatbantuan_embedding_text3small.csv"
 # EMBEDDING_MODEL = "text-embedding-3-small"
 DATASET_PATH = "question\\fix_pusatbantuan_embedding_ada002.csv"

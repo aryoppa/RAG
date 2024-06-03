@@ -13,7 +13,7 @@ client = OpenAI(
 )
 
 # Menentukan jumlah hasil pencarian teratas dan model yang akan digunakan
-TOP_N = 5
+TOP_N = 3
 MODEL = "gpt-3.5-turbo-0125"
 # MODEL = "gpt-4o"
 
@@ -122,49 +122,56 @@ def process_question(question: str) -> str:
         return {"message": error, "index": ""}
 
 
-# Mendefinisikan fungsi untuk melakuka validasi apakah jawaban dari "process_question" sesuai dengan pertanyaan dan referensi yang diberikan
+# Mendefinisikan fungsi untuk melakukan validasi apakah jawaban dari "process_question" sesuai dengan pertanyaan 'question' dari user dan referensi 'search_results['konten']' yang diberikan
 def validate_question(question: str) -> str:
     try:
         # Memuat data yang dibutuhkan untuk setiap pertanyaan
         df = load_data()
-
         # Mencari hasil yang relevan dalam notebook berdasarkan pertanyaan pengguna
         search_results = search_notebook(df, question, top_n=TOP_N)
         # Jika hasil pencarian ditemukan
         if search_results:
-            # Instruksi Prompt Sistem, Perhatikan pembuatan prompt
-            system_content = f"""
+            # Memanggil fungsi untuk mendapatkan inti dari pertanyaan user
+            core_question = understanding_question(question)
+            # Memanggil fungsi untuk memberikan jawaban dari inti pertanyaan user berdasarkan FAQ
+            processed_response = process_question(question)
+            # Mengambil hasil jawaban dalam bentuk json, hanya mengambil hasil response 'message'
+            processed_message = processed_response.get("message")
+
+            # Prompt untuk melakukan validasi jawaban berdasarkan pertanyaan original user, inti pertanyaan user, dan referensi hasil dari FAQ
+            system_content = """
+            You are a virtual assistant that validates responses to user questions. \n
+            You will be provided with the user's original question, the core essence of the question, the response generated for the question, and the reference data.\n
+            Your task is to validate whether the generated response correctly answers the core essence of the user's question based on the reference data.\n
+            Please note that not all information in the reference data may be correct. Your goal is to check if any part of the reference data includes the correct answer.\n
+            If the response is correct and answers the user's question, label it as TRUE. If not, label it as FALSE.
             """
 
             prompt = [
-                # Pesan sistem memberikan instruksi kepada model tentang bagaimana menjawab pertanyaan, dan hasil semantic search FAQ
                 {"role": "system", "content": system_content},
-                # Pesan pengguna pertanyaan pengguna
-                {"role": "user", "content": f"""\n
-                """},
+                {"role": "user", "content": f"Original Question: {question}\nCore Essence of Question: {core_question}\nGenerated Response: {processed_message}\nReference Data: {search_results['konten']}"}
             ]
 
-            # print(prompt)
-            # Mengirimkan permintaan ke API OpenAI untuk menghasilkan respons
             response = client.chat.completions.create(
-                model=MODEL,  # Model yang digunakan untuk menghasilkan respons
-                messages=prompt,  # Pesan yang diberikan ke model
-                temperature=0,  # Mengatur randomisasi output menjadi deterministik
-                max_tokens=150  # Jumlah maksimum token dalam respons
+                model=MODEL,
+                messages=prompt,
+                temperature=0,
+                max_tokens=20,
             )
 
-            # Mengambil respons dari hasil yang dihasilkan oleh model
-            final_response = response.choices[0].message.content
-            indexes = str(search_results["index"])
-            return {"message": final_response, "index": indexes}
-        else:
-            # Jika tidak ada hasil pencarian yang ditemukan
-            no_result = "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik"
-            return {"message": no_result, "index": ""}
-    except TypeError:
-        # Menangani pengecualian jika terjadi TypeError
-        error = "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
-        return {"message": error, "index": ""}
-    
+            validation_response = response.choices[0].message.content
+            print(prompt)
+            print("------------------")
+            print(validation_response)
 
-    # Bisa gunakan ai untuk review dan klasifikasi apakah jawaba telah sesuai base on referece, beri label TRUE or FALSE, True maka langsung lepar hasi process_question, if False maka bilang maaf informasi anda tidak ditemukan
+            # Validasi hasil
+            if "TRUE" in validation_response:
+                return processed_response
+            else:
+                return {"message": "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik", "index": ""}
+
+        else:
+            return {"message": "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik", "index": ""}
+        
+    except TypeError:
+        return {"message": "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?", "index": ""}
