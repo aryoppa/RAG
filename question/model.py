@@ -160,10 +160,9 @@ def validate_question(question: str) -> str:
             )
 
             validation_response = response.choices[0].message.content
-            print(prompt)
-            print("------------------")
-            print(validation_response)
-
+            # print(prompt)
+            # print("------------------")
+            # print(validation_response)
             # Validasi hasil
             if "TRUE" in validation_response:
                 return processed_response
