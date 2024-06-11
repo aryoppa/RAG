@@ -1,7 +1,7 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from pydantic import BaseModel
 from classify.classify import classify_input
-from question.model import process_question , understanding_question, validate_question
+from question.model import validate_question
 from tracking.trackings import process_tracking
 from greeting.greetings import answer_greeting
 from fastapi.middleware.cors import CORSMiddleware
@@ -39,10 +39,10 @@ async def chatbot_endpoint(input_data: InputData) -> str:
     elif classification == "absurd_question":
         response = {"message": "Maaf, saya tidak mengerti pertanyaan Anda. Bisakah Anda mengajukan pertanyaan lain?", "index": ""}
     elif classification == "faq_question":
+        # mendapatkan inti pertanyaan dari user -> memproses pertanyaan pengguna -> validasi jawaban
         response = validate_question(text)
     elif classification == "tracking_question":
         response = process_tracking(text)
     else:
         response = {"message": "Ada yang bisa saya bantu? Tolong berikan detail pertanyaannya agar saya bisa memberikan bantuan yang lebih spesifik.", "index": ""}
-    
     return JSONResponse(content={"data": response})
