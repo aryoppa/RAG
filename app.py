@@ -27,22 +27,28 @@ class InputData(BaseModel):
     text: str
 
 # Definisikan API endpoint untuk menangani permintaan input dan mengembalikan respons
-@app.post("/chatbot/")
-async def chatbot_endpoint(input_data: InputData) -> str:
-    text = input_data.text.strip().lower()
-    classification = classify_input(text)
-    
-    if text in ["hi", "halo"]:
-        response = answer_greeting(text)
+async def chatbot_endpoint(input_data: InputData):
+    question = input_data.question.strip().lower()
+    tag = input_data.tag
+
+    classification = classify_input(question)
+
+    if question in ["hi", "halo"]:
+        response = answer_greeting(question)
     elif classification == "greeting":
-        response = answer_greeting(text)
+        response = answer_greeting(question)
     elif classification == "absurd_question":
         response = {"message": "Maaf, saya tidak mengerti pertanyaan Anda. Bisakah Anda mengajukan pertanyaan lain?", "index": ""}
     elif classification == "faq_question":
-        # mendapatkan inti pertanyaan dari user -> memproses pertanyaan pengguna -> validasi jawaban
-        response = validate_question(text)
+        response = validate_question(question, tag)
     elif classification == "tracking_question":
-        response = process_tracking(text)
+        response = process_tracking(question)
     else:
         response = {"message": "Ada yang bisa saya bantu? Tolong berikan detail pertanyaannya agar saya bisa memberikan bantuan yang lebih spesifik.", "index": ""}
+    
     return JSONResponse(content={"data": response})
+
+# API POST
+# curl -X POST "http://localhost:8000/chatbot/" \
+# -H "Content-Type: application/json" \
+# -d '{"question": "Apa alamat kantor LNSW?", "tag": "faq"}'

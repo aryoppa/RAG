@@ -69,13 +69,12 @@ def understanding_question(question: str) -> str:
         return {"message": error, "index": ""}
 
 # Mendefinisikan fungsi untuk memproses pertanyaan pengguna
-def process_question(question: str) -> str:
+def process_question(question: str, tag: str) -> str:
     try:
         # Memuat data yang dibutuhkan untuk setiap pertanyaan
         df = load_data()
-        
         # Mencari hasil yang relevan dalam notebook berdasarkan pertanyaan pengguna
-        search_results = search_notebook(df, question, top_n=TOP_N)
+        search_results = search_notebook(df, question,tag=tag, top_n=TOP_N)
         # Jika hasil pencarian ditemukan
         if search_results:
             # Instruksi Prompt Sistem, Perhatikan pembuatan prompt
@@ -123,18 +122,18 @@ def process_question(question: str) -> str:
 
 
 # Mendefinisikan fungsi untuk melakukan validasi apakah jawaban dari "process_question" sesuai dengan pertanyaan 'question' dari user dan referensi 'search_results['konten']' yang diberikan
-def validate_question(question: str) -> str:
+def validate_question(question: str, tag: str = None) -> str:
     try:
         # Memuat data yang dibutuhkan untuk setiap pertanyaan
         df = load_data()
         # Mencari hasil yang relevan dalam notebook berdasarkan pertanyaan pengguna
-        search_results = search_notebook(df, question, top_n=TOP_N)
+        search_results = search_notebook(df, question,tag=tag, top_n=TOP_N)
         # Jika hasil pencarian ditemukan
         if search_results:
             # Memanggil fungsi untuk mendapatkan inti dari pertanyaan user
             core_question = understanding_question(question)
             # Memanggil fungsi untuk memberikan jawaban dari inti pertanyaan user berdasarkan FAQ
-            processed_response = process_question(question)
+            processed_response = process_question(question, tag=tag)
             # Mengambil hasil jawaban dalam bentuk json, hanya mengambil hasil response 'message'
             processed_message = processed_response.get("message")
 

@@ -43,17 +43,25 @@ def cosine_similarity(embedding1, embedding2):
     dot_product = np.dot(embedding1, embedding2)
     magnitude_embedding1 = np.linalg.norm(embedding1)
     magnitude_embedding2 = np.linalg.norm(embedding2)
-    cosine_similarity= dot_product / (magnitude_embedding1 * magnitude_embedding2)
+    cosine_similarity = dot_product / (magnitude_embedding1 * magnitude_embedding2)
     return cosine_similarity
 
 # Fungsi untuk mencari hasil yang relevan dalam notebook berdasarkan pertanyaan pengguna
-def search_notebook(df, question, top_n=TOP_N):
+def search_notebook(df, question, tag=None, top_n=TOP_N):
     # Mengubah kolom 'embedding' menjadi array numpy
     df['embedding'] = df['embedding'].apply(eval).apply(np.array)
     # Mendapatkan embedding untuk pertanyaan
     search_embeddings = get_embedding(question)
     # Menghitung kemiripan antara embedding pertanyaan dan embedding dalam dataset
     df["similarity"] = df['embedding'].apply(lambda x: cosine_similarity(x, search_embeddings))
+
+    # Jika tag diberikan, filter dataframe berdasarkan tag
+    if tag:
+        df_tagged = df[df['tag'] == tag]
+        # Jika ada dokumen yang sesuai dengan tag, gunakan dokumen tersebut
+        if not df_tagged.empty:
+            df = df_tagged
+
     # Mengurutkan DataFrame berdasarkan kemiripan
     df = df.sort_values(by='similarity', ascending=False)
     # Mendapatkan n hasil teratas
@@ -62,15 +70,17 @@ def search_notebook(df, question, top_n=TOP_N):
     # Menyiapkan struktur untuk menyimpan dokumen yang mirip
     similar_docs = {
         "konten": ''' ''',
-        "index": []
+        "tag"   : [],
+        "index" : [],
     }
 
     # Menambahkan hasil pencarian ke struktur dokumen yang mirip
     for rows in top_results.itertuples():
         # Hanya mengambil data yang memiliki simmiliarity diatas 50%
-        if rows.similarity < 0.5:
-            similar_docs["konten"] += "Mohon Maaf saya tidak dapat menemukan data terkait"
-        else:
+        if rows.similarity > 0.5:
             similar_docs["konten"] += rows.konten
+            similar_docs['tag'] += rows.tag
             similar_docs["index"].append(rows.index)
+        else:
+            similar_docs["konten"] += "Mohon Maaf saya tidak dapat menemukan data terkait"
     return similar_docs
