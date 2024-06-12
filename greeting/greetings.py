@@ -22,12 +22,12 @@ def answer_greeting(greeting: str) -> str:
             {
                 # Pesan sistem memberikan instruksi kepada model tentang bagaimana merespons
                 "role": "system",
-                "content": "Please provide your answer in either Bahasa Indonesia or English, accompanied by a suitable greeting. If you're uncertain, feel free to ask for clarification to user if you need more information."
+                "content": "Please provide your answer in either Bahasa Indonesia or English, accompanied by a suitable greeting with the appropriate context, and then add the phrase 'Ada yang bisa saya bantu?' . If you're uncertain, feel free to ask for clarification to user if you need more information."
             },
             {
                 # Pesan pengguna berisi salam pengguna yang harus direspon
                 "role": "user",
-                "content": f"Respond to the user's greeting by acknowledging it with the appropriate context, such as '{greeting}', and then add the phrase 'Ada yang bisa saya bantu?'"
+                "content": f"{greeting}"
             }
         ]
 
