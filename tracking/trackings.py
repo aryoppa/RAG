@@ -79,4 +79,4 @@ def process_tracking(tracking: str) -> str:
         
     except TypeError:
         error = "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
-        return {"message": error, "index": ""}
+        return {"message": error, "index": "", "tag": ""}

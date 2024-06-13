@@ -59,22 +59,20 @@ def understanding_question(question: str) -> str:
 
         # Mengambil respons dari hasil yang dihasilkan oleh model
         final_response = response.choices[0].message.content.strip()
-        # print(f"Raw Question: {question}")
-        # print(f"Understanding Question: {final_response}")
         return final_response
 
     except Exception as e:
         # Menangani pengecualian jika terjadi kesalahan pada API call
         error = "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
-        return {"message": error, "index": ""}
+        return {"message": error, "index": "", "tag": ""}
 
 # Mendefinisikan fungsi untuk memproses pertanyaan pengguna
-def process_question(question: str, tag: str) -> str:
+def process_question(question: str, tag) -> str:
     try:
         # Memuat data yang dibutuhkan untuk setiap pertanyaan
-        df = load_data()
+        df = load_data(tag=tag)
         # Mencari hasil yang relevan dalam notebook berdasarkan pertanyaan pengguna
-        search_results = search_notebook(df, question,tag=tag, top_n=TOP_N)
+        search_results = search_notebook(df, question, top_n=TOP_N)
         # Jika hasil pencarian ditemukan
         if search_results:
             # Instruksi Prompt Sistem, Perhatikan pembuatan prompt
@@ -98,7 +96,6 @@ def process_question(question: str, tag: str) -> str:
                 """},
             ]
 
-            # print(prompt)
             # Mengirimkan permintaan ke API OpenAI untuk menghasilkan respons
             response = client.chat.completions.create(
                 model=MODEL,  # Model yang digunakan untuk menghasilkan respons
@@ -110,30 +107,32 @@ def process_question(question: str, tag: str) -> str:
             # Mengambil respons dari hasil yang dihasilkan oleh model
             final_response = response.choices[0].message.content
             indexes = str(search_results["index"])
-            return {"message": final_response, "index": indexes}
+            
+            tags = search_results['tag']
+            return {"message": final_response, "index": indexes, "tag": tags}
         else:
             # Jika tidak ada hasil pencarian yang ditemukan
             no_result = "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik"
-            return {"message": no_result, "index": ""}
+            return {"message": no_result, "index": "", "tag":""}
     except TypeError:
         # Menangani pengecualian jika terjadi TypeError
         error = "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
-        return {"message": error, "index": ""}
+        return {"message": error, "index": "", "tag":""}
 
 
 # Mendefinisikan fungsi untuk melakukan validasi apakah jawaban dari "process_question" sesuai dengan pertanyaan 'question' dari user dan referensi 'search_results['konten']' yang diberikan
-def validate_question(question: str, tag: str = None) -> str:
+def validate_question(question: str, tag) -> str:
     try:
-        # Memuat data yang dibutuhkan untuk setiap pertanyaan
-        df = load_data()
+        # Memuat data yang dibutuhkan untuk setiap pertanyaan berdasarkan tag/kategori
+        df = load_data(tag=tag)
         # Mencari hasil yang relevan dalam notebook berdasarkan pertanyaan pengguna
-        search_results = search_notebook(df, question,tag=tag, top_n=TOP_N)
+        search_results = search_notebook(df, question, top_n=TOP_N)
         # Jika hasil pencarian ditemukan
         if search_results:
             # Memanggil fungsi untuk mendapatkan inti dari pertanyaan user
             core_question = understanding_question(question)
             # Memanggil fungsi untuk memberikan jawaban dari inti pertanyaan user berdasarkan FAQ
-            processed_response = process_question(question, tag=tag)
+            processed_response = process_question(question,tag=tag)
             # Mengambil hasil jawaban dalam bentuk json, hanya mengambil hasil response 'message'
             processed_message = processed_response.get("message")
 
@@ -159,17 +158,14 @@ def validate_question(question: str, tag: str = None) -> str:
             )
 
             validation_response = response.choices[0].message.content
-            # print(prompt)
-            # print("------------------")
-            # print(validation_response)
-            # Validasi hasil
+            # Jika Jawaban yang diberikan telah sesuai dengan pertanyaan user serta referensi, maka langsung berikan jawaban sebelumnya
             if "TRUE" in validation_response:
                 return processed_response
             else:
-                return {"message": "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik", "index": ""}
+                return {"message": "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik", "index": "", "tag":""}
 
         else:
-            return {"message": "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik", "index": ""}
+            return {"message": "Maaf, saya tidak bisa menemukan informasi yang sesuai dengan pertanyaan Anda. Mohon berikan detail pertanyaannya agar saya dapat memberikan bantuan yang lebih spesifik", "index": "", "tag":""}
         
     except TypeError:
-        return {"message": "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?", "index": ""}
+        return {"message": "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?", "index": "", "tag":""}

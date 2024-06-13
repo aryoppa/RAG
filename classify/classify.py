@@ -16,16 +16,16 @@ MODEL = "gpt-3.5-turbo-0125"
 # MODEL = "gpt-4o"
 
 # Mendefinisikan fungsi untuk mengklasifikasikan input pengguna sebagai salam atau pertanyaan
-def classify_input(user_input: str) -> str:
+def classify_input(user_input: str, tag=None) -> str:
     try:
         # Pesan sistem yang memberikan instruksi kepada model
         system_message =  f"""
             You are a virtual assistant that helps to classify user input as a label. \n
             You will be provided with user queries. \n
             You are required to classify the user input into one of the labels: 'greeting', 'absurd_question', 'faq_question', 'tracking_question'. \n
-            Only one label should be assigned to user input, and only return the label. \n
 
-            Here is an example of a user query category: \n
+            Here is an example of a user query with category: \n
+
             A. Example 'absurd_question':\n
                 1. Example Question: "p" \n
                 2. Example Question: "jdjnc8e" \n
@@ -44,18 +44,17 @@ def classify_input(user_input: str) -> str:
                 4. Example Question: "cara tracking registrasi insw" \n
                 5. Example Question: "saya menemukan bug" \n
 
-            D. Category 'tracking_question' must be include no Aju 26 digit or have ticket number using the following format: \n 
-            
-            Example category 'tracking_question':\n
-                Here user ask about tracking status of aju. \n
-                Check Aju: \n
-                    - Example Format: "Status aju aju / Respon aju /Status pengajuan [Aju 26 digit]"  or similar\n
-                    - Example Question: "Status aju 00009001061720231212991201" or similar\n
-                    - Example Question: "Status pengajuan 00009001061720231212991201"  or similar\n
-                    - Example Question: "Respon aju 0009001061720231212991201"  or similar\n
-                or other related format that means user ask about tracking status of aju but must be include 26 Digit Number(26 digit number consisting of number and alphabet)\n
+            D. Category 'tracking_question': Queries must include a 26-digit number. If no Aju 26-digit number is present, or only include "pengajuan" or "aju" sentence , then its not tracking_question:\n
 
-                Please classify {user_input} and give only 1 sentence consist of one of the labels: 'greeting', 'absurd_question', 'faq_question', 'tracking_question'. \n
+            Example category 'tracking_question': \n
+            Here, users inquire about the tracking status of Aju.\n
+            Check Aju: \n
+                - Example Format: "Status aju / Respon aju / Status pengajuan [Aju 26 digit]" or similar \n
+                - Example Question: "Status aju 00009001061720231212991201" or similar \n
+                - Example Question: "Status pengajuan 00009001061720231212991201" or similar \n
+                - Example Question: "Respon aju 0009001061720231212991201" or similar \n
+
+            You Should only return the label without any additional sentences\n
         """
         
         # Membuat prompt dengan dua pesan: sistem dan pengguna
@@ -75,7 +74,7 @@ def classify_input(user_input: str) -> str:
             model=MODEL,
             messages=prompt,
             temperature=0.0,  # Mengatur randomisasi output menjadi deterministik
-            max_tokens=20,    # Jumlah maksimum token dalam respons
+            max_tokens=10,    # Jumlah maksimum token dalam respons
             stop=["\n"],      # Menghentikan respons di karakter newline
         )
         
@@ -85,4 +84,4 @@ def classify_input(user_input: str) -> str:
     except Exception as e:
         # Menangani pengecualian dan mengembalikan pesan kesalahan default
         error = "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
-        return {"message": error, "index": ""}
+        return {"message": error, "index": "", "tag": ""}
