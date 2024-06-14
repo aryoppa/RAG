@@ -42,8 +42,7 @@ def process_tracking(tracking: str) -> str:
         system_message =  f"""
         Your task is to extract Nomor Aju (26 digit number consisting of number and alphabet) from the tracking number from user input. \n
         Please only return the Nomor Aju or Nomor Pengajuan value (26 digit number consisting of number and alphabet) from the tracking number. \n
-        example: \n
-        30101A0B50EA2013042900003B \n
+        example: 30101A0B50EA2013042900003B \n
 
         so in this case, your task is to only return '30101A0B50EA2013042900003B' from the tracking number.
         dont include the 'Nomor Aju', 'Nomor Pengajuan' or any sentence other than value in  word in the response.

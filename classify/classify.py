@@ -80,6 +80,7 @@ def classify_input(user_input: str, tag=None) -> str:
         
         # Ekstrak label yang dihasilkan dari respons
         label = response.choices[0].message.content
+        # print(f"Label : {label}")
         return label
     except Exception as e:
         # Menangani pengecualian dan mengembalikan pesan kesalahan default

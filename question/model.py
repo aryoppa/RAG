@@ -70,9 +70,9 @@ def understanding_question(question: str) -> str:
 def process_question(question: str, tag) -> str:
     try:
         # Memuat data yang dibutuhkan untuk setiap pertanyaan
-        df = load_data(tag=tag)
+        df = load_data()
         # Mencari hasil yang relevan dalam notebook berdasarkan pertanyaan pengguna
-        search_results = search_notebook(df, question, top_n=TOP_N)
+        search_results = search_notebook(df, question, tag=tag, top_n=TOP_N)
         # Jika hasil pencarian ditemukan
         if search_results:
             # Instruksi Prompt Sistem, Perhatikan pembuatan prompt
@@ -92,7 +92,7 @@ def process_question(question: str, tag) -> str:
                 # Pesan pengguna pertanyaan pengguna
                 {"role": "user", "content": f"""
                 User Question/Queries: {question}. \n
-                A frequently asked questions (FAQ) list: {search_results['konten']}. \n
+                (FAQ) Data: {search_results['konten']}. \n
                 """},
             ]
 
@@ -106,8 +106,9 @@ def process_question(question: str, tag) -> str:
 
             # Mengambil respons dari hasil yang dihasilkan oleh model
             final_response = response.choices[0].message.content
+            # List Index pada data base knowledge sebagai referensi
             indexes = str(search_results["index"])
-            
+            # List tag/kategori pada referensi
             tags = search_results['tag']
             return {"message": final_response, "index": indexes, "tag": tags}
         else:
@@ -124,15 +125,15 @@ def process_question(question: str, tag) -> str:
 def validate_question(question: str, tag) -> str:
     try:
         # Memuat data yang dibutuhkan untuk setiap pertanyaan berdasarkan tag/kategori
-        df = load_data(tag=tag)
+        df = load_data()
         # Mencari hasil yang relevan dalam notebook berdasarkan pertanyaan pengguna
-        search_results = search_notebook(df, question, top_n=TOP_N)
+        search_results = search_notebook(df, question, tag=tag, top_n=TOP_N)
         # Jika hasil pencarian ditemukan
         if search_results:
             # Memanggil fungsi untuk mendapatkan inti dari pertanyaan user
             core_question = understanding_question(question)
             # Memanggil fungsi untuk memberikan jawaban dari inti pertanyaan user berdasarkan FAQ
-            processed_response = process_question(question,tag=tag)
+            processed_response = process_question(question, tag=tag)
             # Mengambil hasil jawaban dalam bentuk json, hanya mengambil hasil response 'message'
             processed_message = processed_response.get("message")
 

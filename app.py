@@ -31,7 +31,7 @@ class InputData(BaseModel):
 @app.post("/chatbot/")
 async def chatbot_endpoint(input_data: InputData):
     question = input_data.question.strip().lower()
-    tag = input_data.tag  # Ambil tag dari input data, bisa None jika tidak diberikan
+    tag = input_data.tag.strip().lower() if input_data.tag else None  # Ambil tag dari input data, bisa None jika tidak diberikan
 
     classification = classify_input(question)
 
