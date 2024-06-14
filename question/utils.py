@@ -16,14 +16,14 @@ client = OpenAI(
 TOP_N = 3
 
 # Dataset berdasarkan kategori
-DATASET_PATH_GENERAL = "data/embedd/BASE_DATA.csv"
+DATASET_PATH = "data/embedd/BASE_DATA.csv"
 
 # Embedding Model OpenAI
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
 # Fungsi untuk memuat data dari file CSV
 def load_data():
-    data = pd.read_csv(DATASET_PATH_GENERAL)
+    data = pd.read_csv(DATASET_PATH)
     # Mengganti nilai null dalam kolom 'embedding' dengan string kosong
     data['embedding'] = data['embedding'].fillna('[]')
     return data
