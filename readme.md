@@ -11,8 +11,11 @@ API ini memberikan layanan chatbot menggunakan model bahasa berbasis OpenAI, ter
 3. **model.py**: Memproses pertanyaan pengguna dan memberikan respons berdasarkan konteks data yang diberikan.
    - understanding_question -> process_question -> validate rasponse answer base on original question, core question, references
 4. **tracking.py**: Menangani permintaan untuk melacak status pengajuan dengan mengekstrak nomor aju dari input pengguna dan mengambil informasi terkait dari sumber data eksternal. Menggunakan nomor aju yang diekstrak, permintaan API dibuat ke layanan API Ceisa
-   - `http://10.239.13.192/TrackingCeisaService/getStatus?noAju={nomor_aju}`
+   - NOMOR AJU : `http://10.239.13.192/TrackingCeisaService/getStatus?noAju={nomor_aju}`
+   - SSM QC
+   - SSM PERIZINAN
 5. **utils.py**: Berisi fungsi utilitas untuk memuat data, menghasilkan embedding teks, menghitung kemiripan kosinus, dan melakukan pencarian dalam dataset.
+   Memfilter base knowledge berdasarkan tag/kategori(optional) yang user masukan, jika tidak diinclude maka akan mencari di general base knowledge
     - `get_embedding`: Fungsi untuk menghasilkan embedding untuk input teks.
     - `load_data`: Fungsi untuk memuat data untuk model.
     - `cosine_similarity`: Fungsi untuk menghitung kesamaan kosinus antara vektor.
@@ -47,10 +50,10 @@ Anda dapat berinteraksi dengan API menggunakan permintaan HTTP, misalnya menggun
 
 2. Mengajukan pertanyaan:
    ```bash
-   curl -X POST "http://localhost:8000/chatbot/" -H "Content-Type: application/json" -d '{"text": "Apa itu PIB?"}'
+   curl -X POST "http://localhost:8000/chatbot/" -H "Content-Type: application/json" -d '{"text": "Apa itu PIB?",tag:""}'
    ```
 
 3. Melacak status pengajuan:
    ```bash
-   curl -X POST "http://localhost:8000/chatbot/" -H "Content-Type: application/json" -d '{"text": "Status pengajuan 00009001061720231212991201"}'
+   curl -X POST "http://localhost:8000/chatbot/" -H "Content-Type: application/json" -d '{"text": "Nomor Aju 00009001061720231212991201"}'
    ```

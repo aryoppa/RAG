@@ -1,23 +1,22 @@
-import os
-from openai import OpenAI
-from dotenv import load_dotenv
-import requests  
+import requests
 
-# Memuat kunci API OpenAI dari file .env
-load_dotenv(override=True)
+FORMAT_INPUT = """
+Format input tidak dikenali. \n
+Contoh format yang valid: \n
+1. 'SSM QC [13 digit angka]' \n
+2. 'SSM PERIZINAN [13 digit angka]' \n
+3. 'STATUS AJU [minimal 20 karakter alfanumerik]' \n
+Contoh Input: \n
+1. SSM QC 1234567890123 \n
+2. SSM PERIZINAN 1234567890123 \n
+3. STATUS AJU A23456789123456789123456\n
+"""
 
-# Inisialisasi klien OpenAI dengan kunci API yang dimuat dari variabel lingkungan
-client = OpenAI(
-    # Ini adalah default dan bisa diabaikan
-    api_key=os.environ.get("OPENAI_API_KEY"),
-)
+DATA_NOT_FOUND = f"""
+Mohon Maaf data terkait tidak dapat ditemukan
+"""
 
-# Menentukan model yang akan digunakan untuk interaksi dengan OpenAI API
-MODEL = "gpt-3.5-turbo-0125"
-
-# Fungsi untuk mengekstrak informasi dari data mentah dari Ceaisa menjadi string terformat, dan hanya mengambil beberapa bagian informasi saja
-def extract_information_as_string(data_raw):
-    # Ekstraksi informasi HEADER
+def DATA_NO_AJU(data_raw):
     header_info = data_raw["HEADER"][0]
     nomor_aju = header_info["NOMOR_AJU"]
     nomor_daftar = header_info["NOMOR_DAFTAR"]
@@ -26,56 +25,48 @@ def extract_information_as_string(data_raw):
     kode_kantor = header_info["KODE_KANTOR"]
     nama_perusahaan = header_info["NAMA_PERUSAHAAN"]
 
-    # Ekstraksi informasi DETIL_PROSES
-    detil_proses = "\n".join([f"{detil['KODE_PROSES']}: {detil['NAMA_PROSES']} - {detil['WAKTU_PROSES']}" for detil in data_raw["DETIL_PROSES"]])
+    detil_proses = "\n".join([f"{detil['KODE_PROSES']}: {detil['NAMA_PROSES']} - {detil['WAKTU_PROSES']}" for detil in data_raw.get("DETIL_PROSES", [])])
+    detil_respon = "\n".join([f"{respon['KODE_RESPON']}: {respon['NAMA_RESPON']} - {respon['NOMOR_RESPON']}, {respon['TANGGAL_RESPON']}, {respon['WAKTU_RESPON']}" for respon in data_raw.get("DETIL_RESPON", [])])
 
-    # Ekstraksi informasi DETIL_RESPON
-    detil_respon = "\n".join([f"{respon['KODE_RESPON']}: {respon['NAMA_RESPON']} - {respon['NOMOR_RESPON']}, {respon['TANGGAL_RESPON']}, {respon['WAKTU_RESPON']}" for respon in data_raw["DETIL_RESPON"]])
-
-    # Mengembalikan informasi yang diekstrak sebagai string terformat
     return f"NOMOR_AJU: {nomor_aju}\nNOMOR_DAFTAR: {nomor_daftar}\nTANGGAL_DAFTAR: {tanggal_daftar}\nKODE_DOKUMEN: {kode_dokumen}\nKODE_KANTOR: {kode_kantor}\nNAMA_PERUSAHAAN: {nama_perusahaan}\n\nDETIL_PROSES:\n{detil_proses}\n\nDETIL_RESPON:\n{detil_respon}"
 
-# Fungsi untuk memproses tracking berdasarkan nomor aju yang diberikan pengguna
-def process_tracking(tracking: str) -> str:
+def process_tracking(tracking: str) -> dict:
     try:
-        # Pesan sistem yang menjelaskan tugas untuk mengekstrak nomor aju dari input pengguna
-        system_message =  f"""
-        Your task is to extract Nomor Aju (26 digit number consisting of number and alphabet) from the tracking number from user input. \n
-        Please only return the Nomor Aju or Nomor Pengajuan value (26 digit number consisting of number and alphabet) from the tracking number. \n
-        example: 30101A0B50EA2013042900003B \n
-
-        so in this case, your task is to only return '30101A0B50EA2013042900003B' from the tracking number.
-        dont include the 'Nomor Aju', 'Nomor Pengajuan' or any sentence other than value in  word in the response.
-        """
-        # Membuat prompt untuk dikirim ke OpenAI API
-        prompt = [  
-            {'role':'system', 
-            'content': system_message},    
-            {'role':'user', 
-            'content': f"Extract: {tracking}."}  
-        ] 
-        # Mengirim prompt ke OpenAI API dan mendapatkan respons
-        response = client.chat.completions.create(
-            model=MODEL, messages=prompt, temperature=0.0, max_tokens=500
-        )
-
-        # Mengekstrak nomor aju dari respons API
-        nomor_aju = response.choices[0].message.content.strip().upper()
+        # Membagi input user menjadi keyword, action, dan number
+        parts = tracking.split(maxsplit=2)
         
-        # Membuat panggilan API menggunakan nomor aju yang diekstrak
-        api_url = f"http://10.239.13.192/TrackingCeisaService/getStatus?noAju={nomor_aju}"
-        data_raw = requests.get(api_url)
-        data_raw = data_raw.json()
+        if len(parts) != 3:
+            return {"message": FORMAT_INPUT, "index": "", "tag": ""}
         
-        # Memeriksa apakah data ditemukan dalam respons API
-        if "HEADER" not in data_raw or not data_raw["HEADER"]:
-            no_aju_invalid = "Data tidak ditemukan, mohon masukan nomor aju yang benar"
-            return {"message": no_aju_invalid, "index":""}
+        keyword = parts[0].upper()
+        action = parts[1].upper()
+        number = parts[2]
+
+        # Nomor ajun dengan panjang lebih dari 20 karakter
+        if keyword == "STATUS" and action == "AJU" and len(number) > 20:
+            api_url = f"http://10.239.13.192/TrackingCeisaService/getStatus?noAju={number}"
+            response = requests.get(api_url)
+            data_raw = response.json()
+            if "HEADER" not in data_raw or not data_raw["HEADER"]:
+                return {"message": DATA_NOT_FOUND, "index": "", "tag": ""}
+            else:
+                extracted_info_str = DATA_NO_AJU(data_raw)
+                return {"message": extracted_info_str, "index": "", "tag": ""}
+        
+        elif keyword == "SSM" and action == "QC" and len(number) == 13 and number.isdigit():
+            api_url = f"http://127.0.0.1:8001/api/ssmQC?no={number}"
+            response = requests.get(api_url)
+            data_raw = response.json()
+            return {"message": data_raw.get("details", DATA_NOT_FOUND), "index": ""}
+        
+        elif keyword == "SSM" and action == "PERIZINAN" and len(number) == 13 and number.isdigit():
+            api_url = f"http://127.0.0.1:8001/api/ssmPerizinan?no={number}"
+            response = requests.get(api_url)
+            data_raw = response.json()
+            return {"message": data_raw.get("details", DATA_NOT_FOUND), "index": ""}
+        
         else:
-            # Mengekstrak informasi yang diperlukan dan mengembalikannya sebagai string terformat
-            extracted_info_str = extract_information_as_string(data_raw)
-            return {"message":extracted_info_str, "index":""}
-        
-    except TypeError:
-        error = "Maaf, saya tidak bisa menghasilkan respons saat ini. Bagaimana saya bisa membantu Anda?"
-        return {"message": error, "index": "", "tag": ""}
+            return {"message": FORMAT_INPUT, "index": "", "tag": ""}
+    
+    except Exception as e:
+        return {"message": f"Error: {str(e)}", "index": "", "tag": ""}
