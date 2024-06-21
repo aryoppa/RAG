@@ -3,9 +3,9 @@ import requests
 FORMAT_INPUT = """
 Format input tidak dikenali. \n
 Contoh format yang valid: \n
-1. 'QC [24 digit angka]' \n
-2. 'PERIZINAN [24 digit angka]' \n
-3. 'STATUS AJU [minimal 20 karakter alfanumerik]' \n
+1. 'QC' \n
+2. 'PERIZINAN' \n
+3. 'STATUS AJU' \n
 Contoh Input: \n
 1. QC 123456789012345678901234 \n
 2. PERIZINAN 123456789012345678901234 \n
@@ -15,9 +15,6 @@ Contoh Input: \n
 DATA_NOT_FOUND = f"""
 Mohon Maaf data terkait tidak dapat ditemukan.
 """
-
-#Minimum jumlah digit Number Tracking
-LENGTH_NUM = 24
 
 # Bagian yang ingin diambil dari 'STATUS AJU'
 def DATA_NO_AJU(data_raw):
@@ -47,7 +44,7 @@ def process_tracking(tracking: str) -> dict:
         number = parts[1]
 
         # Nomor aju dengan panjang lebih dari 20 karakter
-        if keyword == "STATUSAJU" and len(number) >= LENGTH_NUM:
+        if keyword == "STATUSAJU":
             api_url = f"http://10.239.13.192/TrackingCeisaService/getStatus?noAju={number}"
             response = requests.get(api_url)
             data_raw = response.json()
@@ -56,15 +53,16 @@ def process_tracking(tracking: str) -> dict:
             else:
                 extracted_info_str = DATA_NO_AJU(data_raw)
                 return {"message": extracted_info_str, "index": "", "tag": ""}
-        # Parameter 13 digit number
-        elif keyword == "QC" and len(number) >= LENGTH_NUM and number.isdigit():
+            
+        # Parameter 24 digit number
+        elif keyword == "QC":
             api_url = f"http://127.0.0.1:8001/api/ssmQC?no={number}"
             response = requests.get(api_url)
             data_raw = response.json()
             return {"message": data_raw.get("details", DATA_NOT_FOUND), "index": ""}
         
-        # Parameter 13 digit number
-        elif keyword == "PERIZINAN" and len(number) >= LENGTH_NUM and number.isdigit():
+        # Parameter 24 digit number
+        elif keyword == "PERIZINAN":
             api_url = f"http://127.0.0.1:8001/api/ssmPerizinan?no={number}"
             response = requests.get(api_url)
             data_raw = response.json()
