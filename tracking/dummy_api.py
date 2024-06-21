@@ -4,16 +4,16 @@ from typing import Optional, List
 
 app = FastAPI()
 
-# Define Pydantic model for input data (if needed)
+# model Pydantic untuk input data (opsional)
 class InputData(BaseModel):
-    no: Optional[str] = None  # Define fields as needed
+    no: Optional[str] = None  # Opsional
 
 class SSMResponse(BaseModel):
     tracking_number: str
     status: str
     details: str
 
-# Dummy endpoint for "SSM QC" using GET method
+# Dummy endpoint untuk "SSM QC" menggunakan GET method
 @app.get("/api/statusAju", response_model=SSMResponse)
 async def ssm_qc(no: str):
     return SSMResponse(
@@ -22,7 +22,7 @@ async def ssm_qc(no: str):
         details="Pengajuan completed successfully on 2024-06-17."
     )
 
-# Dummy endpoint for "SSM QC" using GET method
+# Dummy endpoint untuk "SSM QC" umenggunakan GET method
 @app.get("/api/ssmQC", response_model=SSMResponse)
 async def ssm_qc(no: str):
     return SSMResponse(
@@ -31,7 +31,7 @@ async def ssm_qc(no: str):
         details="Quality control completed successfully on 2024-06-17."
     )
 
-# Dummy endpoint for "SSM Perizinan" using GET method
+# Dummy endpoint untuk "SSM Perizinan" menggunakan GET method
 @app.get("/api/ssmPerizinan", response_model=SSMResponse)
 async def ssm_perizinan(no: str):
     return SSMResponse(
@@ -40,7 +40,7 @@ async def ssm_perizinan(no: str):
         details="License approval completed on 2024-06-17."
     )
 
-# Run the FastAPI app with Uvicorn
+
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8001)
