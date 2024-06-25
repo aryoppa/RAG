@@ -14,13 +14,13 @@ class SSMResponse(BaseModel):
     details: str
 
 # Dummy endpoint untuk "SSM QC" menggunakan GET method
-@app.get("/api/statusAju", response_model=SSMResponse)
-async def ssm_qc(no: str):
-    return SSMResponse(
-        tracking_number=no,
-        status="Pengajuan Completed",
-        details="Pengajuan completed successfully on 2024-06-17."
-    )
+# @app.get("/api/statusAju", response_model=SSMResponse)
+# async def ssm_qc(no: str):
+#     return SSMResponse(
+#         tracking_number=no,
+#         status="Pengajuan Completed",
+#         details="Pengajuan completed successfully on 2024-06-17."
+#     )
 
 # Dummy endpoint untuk "SSM QC" umenggunakan GET method
 @app.get("/api/ssmQC", response_model=SSMResponse)

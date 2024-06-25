@@ -1,4 +1,15 @@
 import requests
+import os
+from dotenv import load_dotenv
+
+# Memuat kunci API OpenAI dari file .env
+load_dotenv(override=True)
+
+# Inisialisasi alamat api untuk tracking pada .env file
+NOAJU_API=os.environ.get("NOAJU_API")
+SSMQC_API=os.environ.get("SSMQC_API")
+SSMPERIZINAN_API=os.environ.get("SSMPERIZINAN_API")
+
 
 FORMAT_INPUT = """
 Format input tidak dikenali. \n
@@ -45,7 +56,7 @@ def process_tracking(tracking: str) -> dict:
 
         # Nomor aju dengan panjang lebih dari 20 karakter
         if keyword == "STATUSAJU":
-            api_url = f"http://10.239.13.192/TrackingCeisaService/getStatus?noAju={number}"
+            api_url = f"{NOAJU_API}{number}"
             response = requests.get(api_url)
             data_raw = response.json()
             if "HEADER" not in data_raw or not data_raw["HEADER"]:
@@ -56,14 +67,14 @@ def process_tracking(tracking: str) -> dict:
             
         # Parameter 24 digit number
         elif keyword == "QC":
-            api_url = f"http://127.0.0.1:8001/api/ssmQC?no={number}"
+            api_url = f"{SSMQC_API}{number}"
             response = requests.get(api_url)
             data_raw = response.json()
             return {"message": data_raw.get("details", DATA_NOT_FOUND), "index": ""}
         
         # Parameter 24 digit number
         elif keyword == "PERIZINAN":
-            api_url = f"http://127.0.0.1:8001/api/ssmPerizinan?no={number}"
+            api_url = f"{SSMPERIZINAN_API}{number}"
             response = requests.get(api_url)
             data_raw = response.json()
             return {"message": data_raw.get("details", DATA_NOT_FOUND), "index": ""}
